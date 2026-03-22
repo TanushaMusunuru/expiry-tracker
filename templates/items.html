@@ -1,0 +1,194 @@
+{% extends "base.html" %}
+{% block title %}My Items — Expiry Tracker{% endblock %}
+
+{% block content %}
+
+<div class="container">
+
+  <!-- HEADER -->
+  <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+    <div>
+      <p class="text-uppercase small text-info fw-bold mb-1">Inventory</p>
+      <h2 class="fw-bold mb-1">My Items</h2>
+      <p class="text-muted small mb-0">Sorted by expiry date — closest first.</p>
+    </div>
+    <a href="{{ url_for('index') }}" class="btn btn-primary">+ Add New Item</a>
+  </div>
+
+  {% if items %}
+
+  <!-- STATS -->
+  {% set expired_count = items | selectattr('status','equalto','Expired') | list | length %}
+  {% set soon_count    = items | selectattr('status','equalto','Expiring Soon') | list | length %}
+  {% set due_count     = items | selectattr('status','equalto','Due Soon') | list | length %}
+  {% set safe_count    = items | selectattr('status','equalto','Safe') | list | length %}
+
+  <div class="row g-3 mb-4">
+
+    <div class="col-md-3">
+      <div class="card p-3 shadow-sm text-center">
+        <div>📦</div>
+        <small class="text-muted">Total</small>
+        <h5>{{ items|length }}</h5>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="card p-3 shadow-sm text-center">
+        <div>✅</div>
+        <small class="text-muted">Safe</small>
+        <h5 class="text-success">{{ safe_count }}</h5>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="card p-3 shadow-sm text-center">
+        <div>⏳</div>
+        <small class="text-muted">Expiring Soon</small>
+        <h5 class="text-warning">{{ soon_count + due_count }}</h5>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="card p-3 shadow-sm text-center">
+        <div>🚫</div>
+        <small class="text-muted">Expired</small>
+        <h5 class="text-danger">{{ expired_count }}</h5>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- SEARCH + FILTER -->
+  <div class="d-flex gap-3 flex-wrap mb-3">
+    <input type="text" id="filter-input" class="form-control w-auto" placeholder="Search...">
+
+    <select id="status-filter" class="form-select w-auto">
+      <option value="">All statuses</option>
+      <option value="Safe">Safe</option>
+      <option value="Due Soon">Due Soon</option>
+      <option value="Expiring Soon">Expiring Soon</option>
+      <option value="Expired">Expired</option>
+    </select>
+  </div>
+
+  <!-- TABLE -->
+  <div class="card shadow-sm">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0" id="items-table">
+
+        <thead class="table-light">
+          <tr>
+            <th>Item</th>
+            <th>Category</th>
+            <th>Expiry</th>
+            <th>Days Left</th>
+            <th>Status</th>
+            <th class="text-end">Action</th>
+          </tr>
+        </thead>
+
+        <tbody>
+        {% for item in items %}
+        <tr data-status="{{ item.status }}">
+
+          <td class="fw-semibold">{{ item.name }}</td>
+
+          <td>
+            <span class="badge bg-secondary">{{ item.category }}</span>
+          </td>
+
+          <td>{{ item.expiry_date }}</td>
+
+          <td>
+            {% if item.days_left < 0 %}
+              <span class="text-danger fw-bold">Overdue</span>
+            {% elif item.days_left == 0 %}
+              <span class="text-warning fw-bold">Today</span>
+            {% else %}
+              {{ item.days_left }}d
+            {% endif %}
+          </td>
+
+          <td>
+            {% if item.status == 'Expired' %}
+              <span class="badge bg-danger">Expired</span>
+            {% elif item.status == 'Expiring Soon' %}
+              <span class="badge bg-warning text-dark">Expiring Soon</span>
+            {% elif item.status == 'Due Soon' %}
+              <span class="badge bg-primary">Due Soon</span>
+            {% else %}
+              <span class="badge bg-success">Safe</span>
+            {% endif %}
+          </td>
+
+          <td class="text-end">
+            <a href="{{ url_for('delete', item_id=item.id) }}"
+               class="btn btn-sm btn-outline-danger btn-delete"
+               data-name="{{ item.name }}">
+               Remove
+            </a>
+          </td>
+
+        </tr>
+        {% endfor %}
+        </tbody>
+
+      </table>
+    </div>
+
+    <!-- NO RESULTS -->
+    <div id="no-results" class="text-center py-4 d-none">
+      <p class="text-muted">No items match your search.</p>
+    </div>
+
+  </div>
+
+  {% else %}
+
+  <!-- EMPTY -->
+  <div class="card text-center p-5 shadow-sm">
+    <h5>No items yet 📭</h5>
+    <p class="text-muted">Start tracking your items.</p>
+    <a href="{{ url_for('index') }}" class="btn btn-primary">Add Item</a>
+  </div>
+
+  {% endif %}
+
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+  const textInput = document.getElementById('filter-input');
+  const statusSelect = document.getElementById('status-filter');
+  const rows = document.querySelectorAll('#items-table tbody tr');
+  const noResults = document.getElementById('no-results');
+
+  function applyFilters() {
+    const query = textInput.value.toLowerCase();
+    const status = statusSelect.value;
+    let visible = 0;
+
+    rows.forEach(row => {
+      const matchText = row.textContent.toLowerCase().includes(query);
+      const matchStatus = !status || row.dataset.status === status;
+
+      if (matchText && matchStatus) {
+        row.style.display = '';
+        visible++;
+      } else {
+        row.style.display = 'none';
+      }
+    });
+
+    if (noResults) {
+      noResults.classList.toggle('d-none', visible !== 0);
+    }
+  }
+
+  textInput?.addEventListener('input', applyFilters);
+  statusSelect?.addEventListener('change', applyFilters);
+</script>
+{% endblock %}

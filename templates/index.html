@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — Expiry Tracker{% endblock %}
+
+{% block content %}
+
+<div class="container">
+
+  <!-- HEADER -->
+  <div class="mb-4">
+    <h2 class="fw-bold">Good day, {{ username }} 👋</h2>
+    <p class="text-muted mb-0">Here's an overview of your tracked items.</p>
+  </div>
+
+  <!-- STATS -->
+  <div class="row g-3 mb-4">
+
+    <div class="col-md-4">
+      <div class="card shadow-sm p-3 d-flex flex-row align-items-center gap-3">
+        <div class="fs-3">📦</div>
+        <div>
+          <div class="text-muted small">Total Items</div>
+          <div class="fw-bold fs-5">{{ stats.total }}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card shadow-sm p-3 d-flex flex-row align-items-center gap-3">
+        <div class="fs-3 text-warning">⚠️</div>
+        <div>
+          <div class="text-muted small">Expiring Soon</div>
+          <div class="fw-bold fs-5">{{ stats.expiring }}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card shadow-sm p-3 d-flex flex-row align-items-center gap-3">
+        <div class="fs-3 text-danger">🚫</div>
+        <div>
+          <div class="text-muted small">Expired</div>
+          <div class="fw-bold fs-5">{{ stats.expired }}</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ADD ITEM FORM -->
+  <div class="card shadow-sm p-4 mb-4">
+    <h5 class="mb-3">➕ Add New Item</h5>
+
+    <form id="item-form" action="{{ url_for('submit') }}" method="POST">
+
+      <div class="row g-3">
+
+        <div class="col-md-6">
+          <label class="form-label">Item Name</label>
+          <input
+            type="text"
+            name="name"
+            id="name"
+            class="form-control"
+            placeholder="e.g. Milk, Medicine, Passport"
+            maxlength="100"
+            required>
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label">Category</label>
+          <select name="category" class="form-select">
+            <option value="Food">🍎 Food</option>
+            <option value="Medicine">💊 Medicine</option>
+            <option value="Document">📄 Document</option>
+            <option value="Cosmetics">🧴 Cosmetics</option>
+            <option value="General" selected>📦 General</option>
+          </select>
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label">Expiry Date</label>
+          <input
+            type="date"
+            name="expiry_date"
+            id="expiry_date"
+            class="form-control"
+            required>
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label">Remind me (days before)</label>
+          <input
+            type="number"
+            name="reminder_days"
+            id="reminder_days"
+            class="form-control"
+            placeholder="e.g. 3"
+            min="0"
+            max="365">
+        </div>
+
+      </div>
+
+      <button type="submit" class="btn btn-primary mt-3">Add Item</button>
+
+    </form>
+  </div>
+
+  <!-- QUICK LINKS -->
+  <div class="d-flex gap-3">
+    <a href="{{ url_for('items') }}" class="btn btn-outline-secondary">View All Items →</a>
+    <a href="{{ url_for('calendar') }}" class="btn btn-outline-secondary">Open Calendar →</a>
+  </div>
+
+</div>
+
+{% endblock %}
