@@ -2,7 +2,6 @@
 
 Expiry Tracker is a web application that helps users track and manage the expiry dates of items such as food, medicines, cosmetics, and important documents. It provides timely reminders and a clear overview to prevent waste and improve organization.
 
----
 
 ## Features
 
@@ -14,8 +13,7 @@ Expiry Tracker is a web application that helps users track and manage the expiry
 -  Email notifications before expiry
 -  Search and filter functionality
 -  Delete items with confirmation
-
----
+  
 
 ## Technologies Used
 
@@ -35,7 +33,7 @@ Expiry Tracker is a web application that helps users track and manage the expiry
 - FullCalendar.js (calendar UI)
 - SMTP (email notifications)
 
----
+
 
 ## Project Structure
 
@@ -57,7 +55,7 @@ expiry-tracker/
 └── README.md
 ```
 
----
+
 
 ## Setup Instructions
 
@@ -89,10 +87,9 @@ python app.py
 http://127.0.0.1:5000
 ```
 
----
 
 
----
+
 
 ## Email Configuration
 
@@ -107,7 +104,6 @@ sender = "your-email@gmail.com"
 password = "your-app-password"
 ```
 
----
 
 ## Future Improvements
 
@@ -116,7 +112,7 @@ password = "your-app-password"
 - AI-based expiry prediction  
 
 
----
+
 
 ## Author
 
