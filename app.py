@@ -51,8 +51,8 @@ def hash_password(password):
 # ---------- EMAIL ----------
 def send_email(to_email, item_name):
     try:
-        sender = "musunurutanusha@gmail.com"
-        password = "woeyqsoyonjzorrt"   # ✅ your app password
+        sender = "your mail"
+        password = "your app password"  
 
         server = smtplib.SMTP('smtp.gmail.com', 587)
         server.starttls()
