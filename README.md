@@ -41,8 +41,7 @@ Expiry Tracker is a web application that helps users track and manage the expiry
 expiry-tracker/
 ├── static/
 │   ├── css/
-│   ├── js/
-│   └── images/
+│   └── js/
 ├── templates/
 │   ├── base.html
 │   ├── index.html
@@ -52,6 +51,7 @@ expiry-tracker/
 │   └── register.html
 ├── app.py
 ├── database.db
+├── requirements.txt
 └── README.md
 ```
 
